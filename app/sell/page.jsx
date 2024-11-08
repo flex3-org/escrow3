@@ -31,7 +31,7 @@ export default function SellPage() {
 
     const APP_ID = '0x925a8355eBb74694de76aed92a73344408E883F5';
     const APP_SECRET = '0xa5d32639408f7a6f3ae5757fb51866d8d0751f2fb7633e42c06740249544c723';
-    const PROVIDER_ID = '5025c501-0b3c-4b18-9018-208c3b4f536c';
+    const PROVIDER_ID = '2e167c7d-a7f4-45fb-bcc4-6b6767e196d3';
  
    // Initialize the Reclaim SDK with your credentials
    const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID);
@@ -175,6 +175,13 @@ export default function SellPage() {
                     onChange={(e) => setPrice(e.target.value)}
                   />
                 </div>
+                {requestUrl && (
+       <div style={{ margin: '20px 0' }}>
+         <QRCode value={requestUrl} />
+         {/* Display the request URL */}
+         <p>Request URL: {requestUrl}</p>
+       </div>
+     )}
 
                 <div className="space-y-2">
                   <Label htmlFor="description">Additional Details</Label>
@@ -190,7 +197,15 @@ export default function SellPage() {
 
               <div className="flex justify-end space-x-4">
                 <Button variant="outline">Save as Draft</Button>
-                <Button onClick={handleListTickets}>List Tickets</Button>
+                <button onClick={getVerificationReq}>Get Verification Request</button>
+     {/* Display QR code when URL is available */}
+    
+     {proofs && (
+       <div>
+         <h2>Verification Successful!</h2>
+         <pre>{JSON.stringify(proofs, null, 2)}</pre>
+       </div>
+     )}
               </div>
             </form>
           </CardContent>

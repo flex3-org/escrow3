@@ -58,7 +58,7 @@ export default function Home() {
                 <CardTitle>List Your Tickets</CardTitle>
               </CardHeader>
               <CardContent>
-                Create a listing with ticket details, pricing, and event information. Upload proof of ticket ownership.
+                Create a listing with ticket details, pricing, and event information. Verify Ownership of the tickets using Reclaim.
               </CardContent>
             </Card>
             <Card>

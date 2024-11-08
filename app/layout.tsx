@@ -53,7 +53,7 @@ export default function RootLayout({
               <div className="flex items-center space-x-2">
                 <Shield className="h-6 w-6" />
                 <Link href="/" className="text-xl font-bold">
-                  TicketVault
+                  Tickets3
                 </Link>
               </div>
               <nav className="hidden md:flex items-center space-x-6">
