@@ -1,3 +1,5 @@
+"use client";
+
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
@@ -5,19 +7,43 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Shield } from 'lucide-react';
+import { getAuth, signInWithPopup, GoogleAuthProvider, User } from "firebase/auth";
+import { useState, useEffect } from 'react';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'TicketVault - Secure Ticket Escrow Service',
-  description: 'Buy and sell tickets safely with our secure escrow service',
-};
 
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleSignIn = async () => {
+    const auth = getAuth();
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      setUser(user);
+      console.log("User signed in:", user);
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+    }
+  };
+
   return (
     <html lang="en">
       <body className={cn(inter.className, "min-h-screen bg-background")}>
@@ -40,9 +66,13 @@ export default function RootLayout({
                 <Link href="/how-it-works" className="text-sm font-medium">
                   How It Works
                 </Link>
-                <Button variant="outline" size="sm">
-                  Sign In
-                </Button>
+                {user ? (
+                  <span className="text-sm font-medium">{user.displayName}</span>
+                ) : (
+                  <Button variant="outline" size="sm" onClick={handleSignIn}>
+                    Sign In
+                  </Button>
+                )}
                 <Button size="sm">Get Started</Button>
               </nav>
             </div>

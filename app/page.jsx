@@ -5,8 +5,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Ticket, Shield, TrendingUp } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { db } from "@/lib/firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function Home() {
+  const [tickets, setTickets] = useState([]);
+
+  useEffect(() => {
+    const fetchTickets = async () => {
+      const querySnapshot = await getDocs(collection(db, "tickets"));
+      const ticketsData = querySnapshot.docs.map(doc => doc.data());
+      setTickets(ticketsData);
+    };
+
+    fetchTickets();
+  }, []);
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-neutral-100 dark:from-neutral-950 dark:to-neutral-900">
       {/* Hero Section */}

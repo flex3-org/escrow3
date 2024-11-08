@@ -5,10 +5,29 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+// Import Firestore
+import { db } from "@/lib/firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
 
 export default function BuyPage() {
   const [priceRange, setPriceRange] = useState([0, 1000]);
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    // Fetch data from Firestore
+    const fetchEvents = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "tickets"));
+        const eventsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setEvents(eventsData);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 py-12">
@@ -70,25 +89,20 @@ export default function BuyPage() {
           {/* Search Results */}
           <div className="md:col-span-4 lg:col-span-3">
             <div className="grid gap-6">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Card key={i} className="overflow-hidden">
+              {events.map((event) => (
+                <Card key={event.id} className="overflow-hidden">
                   <CardContent className="p-6">
                     <div className="flex flex-col md:flex-row gap-6">
-                      <div className="w-full md:w-48 aspect-video bg-neutral-100 dark:bg-neutral-800 rounded-lg" />
+                      <div className="w-full md:w-48 aspect-video bg-neutral-400 dark:bg-neutral-800 rounded-lg" />
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-4">
                           <div>
-                            <h3 className="text-xl font-semibold mb-2">Taylor Swift - Eras Tour</h3>
+                            <h3 className="text-xl font-semibold mb-2">{event.eventName}</h3>
                             <p className="text-neutral-600 dark:text-neutral-400">
-                              Aug 15, 2024 • SoFi Stadium, Los Angeles
+                              {event.date} • {event.venue}
                             </p>
                           </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold mb-2">$450</div>
-                            <div className="text-sm text-neutral-600 dark:text-neutral-400">
-                              Section 134, Row 20
-                            </div>
-                          </div>
+                   
                         </div>
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -97,7 +111,7 @@ export default function BuyPage() {
                               Verified Seller
                             </span>
                           </div>
-                          <Button>View Details</Button>
+                          <Button>Get this ticket</Button>
                         </div>
                       </div>
                     </div>
