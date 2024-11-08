@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from 'next/router';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import QRCode from 'react-qr-code';
 import { ReclaimProofRequest } from '@reclaimprotocol/js-sdk';
 import { db } from "@/lib/firebaseConfig"; 
 import { collection, addDoc } from "firebase/firestore";
+
 
 export default function SellPage() {
   const [requestUrl, setRequestUrl] = useState('');
@@ -36,7 +37,7 @@ export default function SellPage() {
  
    // Initialize the Reclaim SDK with your credentials
    const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID,{log:true});
-   reclaimProofRequest.setParams({ shortcode: "EKGWEJ" })
+   reclaimProofRequest.setParams({ shortcode: shortcode })
  
    // Generate the verification request URL
    const requestUrl = await reclaimProofRequest.getRequestUrl();
@@ -55,14 +56,26 @@ export default function SellPage() {
        const timeTaken = (endTime - startTime) / 1000; // Convert to seconds
        const prooof = JSON.parse(proofs.claimData.context);
        console.log(prooof);
-
+       console.log(prooof.extractedParameters);
        console.log('Verification success', proofs);
        console.log(`Time taken for verification: ${timeTaken} seconds`);
        setProofs(proofs);
-       // Add your success logic here, such as:
-       // - Updating UI to show verification success
-       // - Storing verification status
-       // - Redirecting to another page
+
+
+       // Check if the eventName matches the extracted name
+       console.log('Extracted Name:', prooof.extractedParameters.name);
+       console.log("Event Name:", eventName);
+       if (prooof.extractedParameters.name === eventName) {
+         // Call handleListTickets if the names match
+         handleListTickets();
+
+         // Redirect to /buy after adding the data
+         window.location.href = '/buy';
+       } else {
+         // Show an error if the names do not match
+         console.error('Event name does not match the verified name.');
+         alert('Event name does not match the verified name.');
+       }
      },
      // Called if there's an error during verification
      onError: (error) => {
@@ -76,8 +89,8 @@ export default function SellPage() {
    });
  };
 
- const handleListTickets = async (e) => {
-   e.preventDefault();
+ const handleListTickets = async () => {
+
    console.log("Listing Tickets with the following details:");
    console.log("Event Type:", eventType);
    console.log("Event Name:", eventName);
@@ -96,6 +109,7 @@ export default function SellPage() {
        description,
      });
      console.log("Document written with ID: ", docRef.id);
+     router.push('/buy');
    } catch (e) {
      console.error("Error adding document: ", e);
    }
@@ -200,7 +214,7 @@ export default function SellPage() {
 
               <div className="flex justify-end space-x-4">
                 <Button variant="outline">Save as Draft</Button>
-                <button onClick={getVerificationReq}>Get Verification Request</button>
+                <Button onClick={getVerificationReq}>Get Verification Request</Button>
      {/* Display QR code when URL is available */}
     
      {proofs && (

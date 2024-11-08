@@ -5,7 +5,7 @@ declare global {
 }
 
 import React, { useState } from 'react';
-import { ethers } from 'ethers/lib.esm/ethers';
+import { ethers, providers } from 'ethers';
 
 const WalletConnect = () => {
   const [account, setAccount] = useState<string | null>(null);
@@ -13,7 +13,7 @@ const WalletConnect = () => {
   const connectWallet = async () => {
     if (window.ethereum) {
       try {
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const provider = new providers.Web3Provider(window.ethereum);
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
         const address = await signer.getAddress();
