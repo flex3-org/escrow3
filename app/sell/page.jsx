@@ -29,13 +29,14 @@ export default function SellPage() {
     // Your credentials from the Reclaim Developer Portal
     // Replace these with your actual credentials
 
-    const APP_ID = '0x925a8355eBb74694de76aed92a73344408E883F5';
-    const APP_SECRET = '0xa5d32639408f7a6f3ae5757fb51866d8d0751f2fb7633e42c06740249544c723';
+
+    const APP_ID = '0xc50E6EF6aF44033ed0d7E6D35F61cf925Cd30007';
+    const APP_SECRET = '0x3524a55ca7c1799189ebeda9cb1de6ee43edce4b7f72c08afd7fad12b8707fcd';
     const PROVIDER_ID = '2e167c7d-a7f4-45fb-bcc4-6b6767e196d3';
  
    // Initialize the Reclaim SDK with your credentials
-   const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID);
-   reclaimProofRequest.setParams({ shortcode: "YT2WB3" })
+   const reclaimProofRequest = await ReclaimProofRequest.init(APP_ID, APP_SECRET, PROVIDER_ID,{log:true});
+   reclaimProofRequest.setParams({ shortcode: "EKGWEJ" })
  
    // Generate the verification request URL
    const requestUrl = await reclaimProofRequest.getRequestUrl();
@@ -52,6 +53,8 @@ export default function SellPage() {
        // Calculate the elapsed time
        const endTime = Date.now();
        const timeTaken = (endTime - startTime) / 1000; // Convert to seconds
+       const prooof = JSON.parse(proofs.claimData.context);
+       console.log(prooof);
 
        console.log('Verification success', proofs);
        console.log(`Time taken for verification: ${timeTaken} seconds`);
